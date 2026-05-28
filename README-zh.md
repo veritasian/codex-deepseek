@@ -88,6 +88,22 @@ cp -r codex-deepseek ~/.claude/skills/
 
 Claude 会在你提到连接 Codex 到 DeepSeek 时自动检测并运行配置。脚本本身完全独立工作，不需要 Claude — 技能只是锦上添花的便利层。
 
+## 桌面应用
+
+更喜欢图形界面？**[Moon Bridge App](https://github.com/veritasian/moonbridge-app)** 是一个原生 macOS 应用，把 Go 二进制文件封装进了点击即用的界面：
+
+- 从侧边栏选择提供商（DeepSeek、OpenRouter、Groq、Ollama）
+- 粘贴你的 API Key
+- 点击 **启动**
+
+不需要终端，不需要 YAML，不需要任何技术背景。基于 SwiftUI 构建，底层使用同一个 Moon Bridge Go 二进制文件。
+
+```bash
+git clone https://github.com/veritasian/moonbridge-app.git
+cd moonbridge-app && bash build.sh
+open "build/Moon Bridge.app"
+```
+
 ## 文件说明
 
 | 文件 | 用途 |

@@ -88,6 +88,22 @@ cp -r codex-deepseek ~/.claude/skills/
 
 Claude will then automatically detect when you want to connect Codex to DeepSeek and run the setup for you. The scripts work perfectly fine without Claude — the skill is just a convenience layer on top.
 
+## Desktop App
+
+Prefer a GUI? **[Moon Bridge App](https://github.com/veritasian/moonbridge-app)** is a native macOS app that bundles the Go binary with a click-and-go interface:
+
+- Pick a provider from the sidebar (DeepSeek, OpenRouter, Groq, Ollama)
+- Paste your API key
+- Click **Start**
+
+No terminal, no YAML, no engineering skills needed. Built in SwiftUI, powered by the same Moon Bridge Go binary under the hood.
+
+```bash
+git clone https://github.com/veritasian/moonbridge-app.git
+cd moonbridge-app && bash build.sh
+open "build/Moon Bridge.app"
+```
+
 ## Files
 
 | File | Purpose |
