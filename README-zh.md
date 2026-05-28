@@ -97,6 +97,28 @@ Claude 会在你提到连接 Codex 到 DeepSeek 时自动检测并运行配置�
 | `SKILL.md` | Claude Code 技能定义（可选集成） |
 | `README-zh.md` | 本文档的中文版本 |
 
+## 其他桥接方案
+
+本仓库使用 Moon Bridge 作为翻译层，但不是唯一选择。以下是另外 5 个能将 Codex CLI 连接到自定义 LLM 的桥接工具——各有取舍。全部都可以通过 Claude Code 触发配置。
+
+| 桥接工具 | 方式 | 最适合 | 安装 |
+|---|---|---|---|
+| **[CCS](https://github.com/kaitranntt/ccs)** | 配置管理器 + 内置代理。`ccs codex "提示词"` 即可用任意提供商启动 Codex。通过 OpenRouter 支持 300+ 模型，支持 OAuth。仪表盘在 `localhost:3000`。 | 无需改配置文件即可随时切换提供商 | `npm install -g @kaitranntt/ccs` |
+| **[codex-relay](https://github.com/MetaFARS/codex-relay)** | 轻量 Rust 代理。专为 Codex 打造——翻译 Responses API → Chat Completions。自动生成 Codex 配置。 | 极简、快速、单一用途 | `cargo install codex-relay` |
+| **[Nyro](https://github.com/nyroway/nyro)** | 通用网关 + 桌面应用。完整协议翻译（Anthropic ↔ OpenAI ↔ Gemini）。语义缓存，一键 CLI 配置同步。 | 图形界面 + 缓存 + 多协议 | 桌面应用或二进制文件 |
+| **[Lynkr](https://www.npmjs.com/package/lynkr)** | 一条命令的 npm 代理。支持 Codex、Claude Code、Cursor、Cline。Token 优化（节省 60-80%），基于复杂度自动路由。Apache 2.0。 | 快速安装，节省 Token | `npm install -g lynkr` |
+| **[CCRelay](https://github.com/inflaborg/ccrelay)** | VS Code 扩展 + 本地代理。同一端口支持 Anthropic、OpenAI Chat 和 Responses API。配置热加载、Web 仪表盘、中英文界面。 | VS Code 用户、中文界面 | VS Code 插件市场 |
+
+### 如何通过 Claude Code 使用任何桥接工具
+
+本仓库的思路适用于以上所有方案：
+
+1. **安装桥接工具** — 按照其安装命令操作
+2. **将 Codex 指向它** — 在 `~/.codex/config.toml` 中将 `base_url` 设为该桥接工具的本地地址
+3. **让 Claude 帮你配置** — 如果你有 Claude Code，说"帮我把 Codex 通过 CCS 连接到 DeepSeek"，Claude 会逐步引导完成配置
+
+每个桥接工具解决的是同一个核心问题（Codex 使用 Responses API，你的 LLM 不用）——选择最符合你使用习惯和工具链的那一个。
+
 ## 故障排除
 
 | 问题 | 解决方法 |
