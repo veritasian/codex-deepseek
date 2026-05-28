@@ -6,6 +6,12 @@ Clone this repo, run `setup.sh`, and you have a working Codex→DeepSeek connect
 
 [中文文档](README-zh.md) | [License](LICENSE)
 
+## Inspiration
+
+This project is based on the official [DeepSeek + Codex integration guide](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/codex.md) from the DeepSeek team. That guide walks through installing Go, cloning Moon Bridge, writing `config.yml` by hand, generating Codex config via CLI flags, and managing the proxy process — all manually.
+
+This repo wraps every step into **one script** so you don't need to be an engineer to get it working. If the original guide feels like a tech doc, this is the one-click installer.
+
 ## The Mindset
 
 This repo demonstrates a general pattern for solving "protocol mismatch" problems in AI tooling:

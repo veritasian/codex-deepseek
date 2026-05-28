@@ -6,6 +6,12 @@
 
 [English](README.md) | [License](LICENSE)
 
+## 灵感来源
+
+本项目基于 DeepSeek 团队的官方[《Codex + DeepSeek 集成指南》](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/codex.md)。原指南需要手动安装 Go、克隆 Moon Bridge、手写 `config.yml`、通过 CLI 参数生成 Codex 配置、自行管理代理进程——对非技术背景的用户来说门槛不低。
+
+这个仓库把每一步都封装进了**一条脚本**，你不需要懂工程也能搞定。如果原指南是技术文档，这就是一键安装包。
+
 ## 思维方式
 
 这个仓库展示了一套解决 AI 工具"协议不匹配"问题的通用范式：
