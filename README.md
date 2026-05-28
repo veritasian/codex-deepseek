@@ -1,6 +1,20 @@
-# Codex + DeepSeek
+# Codex + DeepSeek — Claude Code Skill
 
-Connect [OpenAI Codex CLI](https://github.com/openai/codex) to [DeepSeek](https://deepseek.com) models via [Moon Bridge](https://github.com/ZhiYi-R/moon-bridge).
+> A [Claude Code](https://claude.ai/code) skill that builds a local protocol bridge between OpenAI Codex CLI and DeepSeek models. **Stop wrestling with config files — let Claude do it.**
+
+This is a **Claude Code skill**. Install it in `~/.claude/skills/` and Claude will automatically detect when you need to connect Codex to DeepSeek, then run the setup for you. If you don't use Claude Code, the scripts still work standalone — but you'll miss the automatic triggering and guided setup.
+
+[中文文档](README-zh.md) | [License](LICENSE)
+
+## The Mindset
+
+This skill embodies a general pattern for solving "protocol mismatch" problems in AI tooling:
+
+1. **Identify the gap** — Codex speaks Responses API, DeepSeek speaks Anthropic Messages API. They'll never talk directly.
+2. **Find a translation layer** — Moon Bridge sits in the middle, converting requests between the two protocols.
+3. **Automate the wiring** — The skill doesn't just document the fix; it executes the entire setup: clone, configure, build, launch.
+
+You can apply this same mindset to any two tools that speak different protocols: find the local proxy, automate the config. Don't spend hours hand-editing YAML when Claude can do it in seconds.
 
 ## Problem
 
@@ -10,6 +24,7 @@ Moon Bridge runs as a local proxy that translates Responses API calls into Anthr
 
 ## Features
 
+- **Claude-powered setup** — describe what you want, Claude runs the skill
 - **One command** — clones, configures, builds, and launches everything
 - **Auto-installs prerequisites** — Go, Node, Codex CLI via Homebrew (macOS)
 - **Secure** — API key prompt with hidden input, stored `chmod 600`
@@ -17,6 +32,16 @@ Moon Bridge runs as a local proxy that translates Responses API calls into Anthr
 - **Zero cloud dependency** — runs entirely on localhost, no third-party proxy
 
 ## Quickstart
+
+### With Claude Code
+
+```
+You: "Connect Codex to my DeepSeek API key"
+Claude: [triggers this skill, runs setup.sh, done]
+You: codex
+```
+
+### Without Claude Code
 
 ```bash
 # 1. Run setup (prompts for your DeepSeek API key)
@@ -40,6 +65,7 @@ Responses API ───────────→ Transform mode ────�
 ## Prerequisites
 
 - macOS (Linux support coming)
+- [Claude Code](https://claude.ai/code) (for automatic skill triggering)
 - [Homebrew](https://brew.sh) (for auto-installing dependencies)
 
 Everything else (Go, Node, Codex CLI) is installed automatically by `setup.sh` if missing.
@@ -53,23 +79,23 @@ Once set up, start moon-bridge before launching Codex:
 codex
 ```
 
-## Using as a Claude Code skill
-
-This repo is also a [Claude Code](https://claude.ai/code) skill. After cloning:
+## Install as a Claude Code skill
 
 ```bash
+git clone https://github.com/veritasian/codex-deepseek.git
 cp -r codex-deepseek ~/.claude/skills/
 ```
 
-Claude will automatically detect and use it when you ask about connecting Codex to DeepSeek.
+Claude will automatically detect this skill when you mention connecting Codex to DeepSeek, running non-OpenAI models with Codex, or hitting protocol errors between AI tools.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `SKILL.md` | Claude Code skill definition (trigger + instructions) |
-| `scripts/setup.sh` | Full one-shot setup |
+| `SKILL.md` | Claude Code skill definition (triggers + instructions) |
+| `scripts/setup.sh` | Full one-shot setup (clone → config → build → launch) |
 | `scripts/start.sh` | Daily quick-start (moon-bridge + codex) |
+| `README-zh.md` | Chinese translation of this document |
 
 ## Troubleshooting
 
@@ -82,4 +108,4 @@ Claude will automatically detect and use it when you ask about connecting Codex 
 
 ## License
 
-MIT
+[MIT](LICENSE)
