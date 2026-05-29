@@ -113,18 +113,6 @@ open "build/Moon Bridge.app"
 | `SKILL.md` | Claude Code skill definition (optional integration) |
 | `README-zh.md` | Chinese translation of this document |
 
-## Alternative bridges
-
-This repo uses Moon Bridge as the translation layer, but it's not the only option. Here are 5 other bridges that connect Codex CLI to custom LLMs — each with a different trade-off. All can be triggered via Claude Code by installing them as skills or asking Claude to configure them.
-
-| Bridge | Approach | Best for | Install |
-|---|---|---|---|
-| **[CCS](https://github.com/kaitranntt/ccs)** | Profile manager + built-in proxy. `ccs codex "prompt"` launches Codex with any configured provider. 300+ models via OpenRouter, OAuth support. Dashboard at `localhost:3000`. | Switching providers on the fly without touching config | `npm install -g @kaitranntt/ccs` |
-| **[codex-relay](https://github.com/MetaFARS/codex-relay)** | Lightweight Rust proxy. Purpose-built for Codex — translates Responses API → Chat Completions. Auto-generates Codex config. | Minimal, fast, single-purpose | `cargo install codex-relay` |
-| **[Nyro](https://github.com/nyroway/nyro)** | Universal gateway with desktop app. Full protocol translation (Anthropic ↔ OpenAI ↔ Gemini). Semantic caching, one-click CLI config sync. | GUI + caching + multi-protocol | Desktop app or binary |
-| **[Lynkr](https://www.npmjs.com/package/lynkr)** | One-command npm proxy. Works with Codex, Claude Code, Cursor, Cline. Token optimization (60-80% savings), complexity-based auto-routing. Apache 2.0. | Quick setup, token savings | `npm install -g lynkr` |
-| **[CCRelay](https://github.com/inflaborg/ccrelay)** | VS Code extension + local proxy. Supports Anthropic, OpenAI Chat, and Responses API on the same port. Config hot-reload, web dashboard, i18n (EN + CN). | VS Code users, Chinese UI | VS Code marketplace |
-
 ### How to use any bridge with Claude Code
 
 The mindset from this repo applies to all of them:
