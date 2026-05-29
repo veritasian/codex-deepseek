@@ -1,4 +1,4 @@
-# Codex + DeepSeek
+# Codex + DeepSeek skill for claude users
 
 > One-command setup that builds a local protocol bridge between OpenAI Codex CLI and DeepSeek models. **Stop hand-editing YAML — this script wires it all for you.**
 
