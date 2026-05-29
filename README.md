@@ -4,6 +4,12 @@
 
 [中文](README-zh.md) | [MIT](LICENSE)
 
+## What this is
+
+The official way to connect Codex and DeepSeek is [this guide](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/codex.md) from DeepSeek. It works, but it's long: install Go, clone Moon Bridge, hand-write a config.yml, generate Codex config with CLI flags, manage the proxy process yourself. For someone who just wants things to work, that's a lot.
+
+This repo turns all of that into **one script**. Same result, no engineering degree required. DIY, but fast.
+
 ## Problem
 
 Codex CLI v0.134+ only speaks the OpenAI Responses API (`/v1/responses`).
