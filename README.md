@@ -1,24 +1,21 @@
-# Codex + DeepSeek
+# Codex + DeepSeek — One-Script Bridge
 
-> One script. One bridge. Codex CLI talks to DeepSeek. No YAML, no Go, no pain.
+> You want Codex CLI but don't want to pay OpenAI. DeepSeek is cheaper and faster — but the two speak completely different protocols. This repo gives you a single script that builds the bridge, writes the config, and launches everything. CLI power, DeepSeek prices, zero manual setup.
 
-[中文](README-zh.md) | [MIT](LICENSE)
+[![Stars](https://img.shields.io/github/stars/veritasian/codex-deepseek)](https://github.com/veritasian/codex-deepseek/stargazers)
+[![License](https://img.shields.io/github/license/veritasian/codex-deepseek)](LICENSE)
 
-## What this is
+[中文说明](README-zh.md)
 
-The official way to connect Codex and DeepSeek is [this guide](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/codex.md) from DeepSeek. It works, but it's long: install Go, clone Moon Bridge, hand-write a config.yml, generate Codex config with CLI flags, manage the proxy process yourself. For someone who just wants things to work, that's a lot.
+## Pain Point
 
-This repo turns all of that into **one script**. Same result, no engineering degree required. DIY, but fast.
+You want to use Codex CLI — it's fast, terminal-native, and free with OAuth. But it only connects to OpenAI models. DeepSeek V4 offers comparable quality at a fraction of OpenAI's cost. Problem: Codex speaks **Responses API**, DeepSeek speaks **Anthropic Messages API**. They literally can't communicate. You get `404 Not Found`.
 
-## Problem
-
-Codex CLI v0.134+ only speaks the OpenAI Responses API (`/v1/responses`).
-DeepSeek only speaks Anthropic Messages API.
-They can't talk. You get `404 Not Found`.
+The official DeepSeek guide walks you through the fix manually — install Go, clone Moon Bridge, hand-edit `config.yml`, run CLI flags, manage a background proxy. Works, but takes 20+ minutes of YAML and frustration.
 
 ## Solution
 
-A script that installs and runs [Moon Bridge](https://github.com/ZhiYi-R/moon-bridge) as a local proxy. It translates Responses ↔ Anthropic so Codex and DeepSeek understand each other. One command, everything automated.
+**One script, end to end.** Clone this repo, run `setup.sh`, and you have a working Codex→DeepSeek connection. The script handles every step: it checks prerequisites (Go, Node, Codex CLI), clones Moon Bridge, writes the config with your API key, builds the binary, generates your `~/.codex/config.toml`, and starts the proxy in the background.
 
 ## Quickstart
 
@@ -28,62 +25,72 @@ bash codex-deepseek/scripts/setup.sh     # prompts for your DeepSeek API key
 bash codex-deepseek/scripts/start.sh     # launches moon-bridge + codex
 ```
 
-Get your API key: [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
+**Get your API key:** [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
 
-## Daily use
+## How It Works
 
-**Auto (one click)** — `start.sh` launches moon-bridge if it's not running, then opens Codex:
+```
+Codex CLI ──Responses API──→ Moon Bridge ──Anthropic API──→ DeepSeek
+          localhost:38440    (local proxy)     api.deepseek.com
+```
 
+| Step | What the script does |
+|---|---|
+| 1. Prerequisites | Checks Go, Node, Codex CLI. Installs missing ones via Homebrew. |
+| 2. Moon Bridge | Clones from GitHub (or `git pull` if already cloned) |
+| 3. Config | Writes `~/moon-bridge/config.yml` with your API key (`chmod 600`) |
+| 4. Build | `go build` the moonbridge binary |
+| 5. Codex | Backs up existing `~/.codex/config.toml`, generates a new one pointing to the bridge |
+| 6. Launch | Starts moonbridge in background on port 38440, ready for Codex |
+
+## Daily Use
+
+**One-click auto:**
 ```bash
 bash codex-deepseek/scripts/start.sh
 ```
 
-**Manual** — start moon-bridge yourself, then run Codex:
-
+**Manual:**
 ```bash
 ~/moon-bridge/moonbridge --config ~/moon-bridge/config.yml &
 codex
 ```
 
-**Always-on** — add moon-bridge to macOS Login Items so it starts when you log in:
+**Login item (starts on boot):**
+System Settings → General → Login Items → `+` → `~/moon-bridge/moonbridge` — add argument: `--config ~/moon-bridge/config.yml`
 
-1. System Settings → General → Login Items & Extensions
-2. Click **+** → navigate to `~/moon-bridge/moonbridge`
-3. Add argument: `--config ~/moon-bridge/config.yml`
+## Bonus: Claude Code Skill
 
-## Claude Code skill
-
-This repo is also a [Claude Code](https://claude.ai/code) skill. Install once, then just ask Claude to set everything up:
+This repo includes a `SKILL.md`. Install it and Claude handles the entire setup with natural language:
 
 ```bash
 cp -r codex-deepseek ~/.claude/skills/
 ```
-
-Then in Claude Code:
 ```
 > connect Codex to my DeepSeek API key
-```
-Claude will run the setup, start the bridge, and configure Codex — all in one go.
-
-## How it works
-
-```
-Codex CLI ──Responses──→ Moon Bridge ──Anthropic──→ DeepSeek
-          localhost:38440         api.deepseek.com
 ```
 
 ## Files
 
-| File | Does |
+| File | Purpose |
 |---|---|
-| `scripts/setup.sh` | Installs everything (Go, moon-bridge, config, build) |
-| `scripts/start.sh` | Launches moon-bridge + Codex |
-| `SKILL.md` | Claude Code skill definition |
+| `scripts/setup.sh` | Full setup: clone → config → build → launch |
+| `scripts/start.sh` | Quick launcher: starts moon-bridge if needed, opens Codex |
+| `SKILL.md` | Claude Code skill for automatic triggering |
+
+## Inspiration
+
+This project is based on the official [DeepSeek + Codex integration guide](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/codex.md). That guide walks through the full manual setup — install Go, clone Moon Bridge, write `config.yml` by hand, generate Codex config via CLI, manage the proxy process. This repo wraps the same steps into one script.
 
 ## Troubleshooting
 
-| Problem | Fix |
+| Symptom | Fix |
 |---|---|
-| `connection refused` | Moon Bridge isn't running |
-| `401` | Bad API key — check `~/moon-bridge/config.yml` |
-| Port 38440 busy | `lsof -ti:38440 \| xargs kill` |
+| `connection refused` | Moon Bridge isn't running — start it first |
+| `401 Unauthorized` | Wrong API key — check `~/moon-bridge/config.yml` |
+| Port 38440 already in use | `lsof -ti:38440 \| xargs kill` |
+| `codex: command not found` | `npm install -g @openai/codex` |
+
+## License
+
+[MIT](LICENSE)

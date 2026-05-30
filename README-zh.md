@@ -1,89 +1,96 @@
-# Codex + DeepSeek
+# Codex + DeepSeek — 一键脚本桥接
 
-> 一个脚本，一座桥。Codex CLI 直连 DeepSeek。告别 YAML，告别折腾。
+> 想用 Codex CLI，但不想付 OpenAI 的账单？DeepSeek 更便宜更快——但两者协议完全不同。这个仓库给你一条脚本，自动搭桥、写配置、启动一切。CLI 的能力，DeepSeek 的价格，零手动。
 
-[English](README.md) | [MIT](LICENSE)
+[![Stars](https://img.shields.io/github/stars/veritasian/codex-deepseek)](https://github.com/veritasian/codex-deepseek/stargazers)
+[![License](https://img.shields.io/github/license/veritasian/codex-deepseek)](LICENSE)
 
-## 这是什么
+[English](README.md)
 
-连接 Codex 和 DeepSeek 的官方方式是 DeepSeek 团队的[这篇指南](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/codex.md)。方法可行，但步骤很长：装 Go、克隆 Moon Bridge、手写 config.yml、用命令行参数生成 Codex 配置、自己管理代理进程。对只想"能用就行"的人来说，太折腾了。
+## 痛点
 
-这个仓库把所有这些变成了**一条脚本**。同样的结果，不需要工程背景。DIY 精神，一键完成。
+你想用 Codex CLI——终端原生、通过 OAuth 免费使用。但它只能连接 OpenAI 的模型。DeepSeek V4 质量相当，成本却只有 OpenAI 零头。问题来了：Codex 使用 **Responses API**，DeepSeek 使用 **Anthropic Messages API**。它们根本无法通信。你只会得到 `404 Not Found`。
 
-## 问题
-
-Codex CLI v0.134+ 只认 OpenAI Responses API（`/v1/responses`）。
-DeepSeek 只认 Anthropic Messages API。
-彼此无法通信。直接连接返回 `404 Not Found`。
+官方 DeepSeek 指南一步一步教你手动修复——安装 Go、克隆 Moon Bridge、手写 `config.yml`、用命令行生成配置、管理后台代理。可行，但需要 20 多分钟和各种 YAML 折腾。
 
 ## 解决方案
 
-一个脚本安装并运行 [Moon Bridge](https://github.com/ZhiYi-R/moon-bridge) 作为本地代理。将 Responses 翻译为 Anthropic，Codex 和 DeepSeek 就能互相理解。一条命令，全部自动完成。
+**一条脚本，从头到尾。** 克隆这个仓库，运行 `setup.sh`，Codex→DeepSeek 就通了。脚本处理每一步：检查环境（Go、Node、Codex CLI）、克隆 Moon Bridge、用你的 API Key 写配置、编译二进制文件、生成 `~/.codex/config.toml`、在后台启动代理。
 
 ## 快速开始
 
 ```bash
 git clone https://github.com/veritasian/codex-deepseek.git
 bash codex-deepseek/scripts/setup.sh     # 会提示输入 DeepSeek API Key
-bash codex-deepseek/scripts/start.sh     # 启动 moon-bridge + Codex
+bash codex-deepseek/scripts/start.sh     # 启动 moon-bridge + codex
 ```
 
-API Key 获取：[platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
+**获取 API Key：** [platform.deepseek.com/api_keys](https://platform.deepseek.com/api_keys)
+
+## 工作原理
+
+```
+Codex CLI ──Responses API──→ Moon Bridge ──Anthropic API──→ DeepSeek
+          localhost:38440      (本地代理)       api.deepseek.com
+```
+
+| 步骤 | 脚本做什么 |
+|---|---|
+| 1. 环境检查 | 检查 Go、Node、Codex CLI。缺失的通过 Homebrew 安装。 |
+| 2. Moon Bridge | 从 GitHub 克隆（已有则 `git pull` 更新） |
+| 3. 配置 | 写入 `~/moon-bridge/config.yml`，API Key 权限设为 `chmod 600` |
+| 4. 编译 | `go build` 构建 moonbridge 二进制文件 |
+| 5. Codex | 备份现有 `~/.codex/config.toml`，生成指向桥接的新配置 |
+| 6. 启动 | 在后台启动 moonbridge，端口 38440，Codex 随时可用 |
 
 ## 日常使用
 
-**自动（一键）** — `start.sh` 自动检测并启动 moon-bridge，然后打开 Codex：
-
+**一键自动：**
 ```bash
 bash codex-deepseek/scripts/start.sh
 ```
 
-**手动** — 自己启动 moon-bridge，再运行 Codex：
-
+**手动：**
 ```bash
 ~/moon-bridge/moonbridge --config ~/moon-bridge/config.yml &
 codex
 ```
 
-**开机自启** — 将 moon-bridge 添加到 macOS 登录项：
+**开机自启：**
+系统设置 → 通用 → 登录项 → `+` → `~/moon-bridge/moonbridge` — 添加参数: `--config ~/moon-bridge/config.yml`
 
-1. 系统设置 → 通用 → 登录项与扩展
-2. 点击 **+** → 找到 `~/moon-bridge/moonbridge`
-3. 添加参数：`--config ~/moon-bridge/config.yml`
+## 附赠：Claude Code 技能
 
-## Claude Code 技能
-
-本仓库也是一个 [Claude Code](https://claude.ai/code) 技能。安装后直接用自然语言让 Claude 配置一切：
+这个仓库包含 `SKILL.md`。安装后 Claude 用自然语言就能完成所有配置：
 
 ```bash
 cp -r codex-deepseek ~/.claude/skills/
 ```
-
-然后在 Claude Code 里说：
 ```
 > 帮我把 Codex 连接到 DeepSeek
-```
-Claude 会自动运行配置、启动桥接、设置 Codex。
-
-## 工作原理
-
-```
-Codex CLI ──Responses──→ Moon Bridge ──Anthropic──→ DeepSeek
-          localhost:38440         api.deepseek.com
 ```
 
 ## 文件说明
 
 | 文件 | 用途 |
 |---|---|
-| `scripts/setup.sh` | 安装一切（Go、moon-bridge、配置、编译） |
-| `scripts/start.sh` | 启动 moon-bridge + Codex |
+| `scripts/setup.sh` | 完整配置：克隆 → 配置 → 编译 → 启动 |
+| `scripts/start.sh` | 快速启动：自动检测并启动 moon-bridge，打开 Codex |
 | `SKILL.md` | Claude Code 技能定义 |
+
+## 灵感来源
+
+本项目基于 DeepSeek 官方的 [Codex + DeepSeek 集成指南](https://github.com/deepseek-ai/awesome-deepseek-agent/blob/main/docs/codex.md)。原指南需要手动安装 Go、克隆 Moon Bridge、手写 `config.yml`、用 CLI 生成配置、自行管理代理进程。这个仓库将同样的步骤封装为一条脚本。
 
 ## 故障排除
 
-| 问题 | 解决 |
+| 症状 | 解决方法 |
 |---|---|
 | `connection refused` | Moon Bridge 未启动 |
-| `401` | API Key 有误 — 检查 `~/moon-bridge/config.yml` |
+| `401 Unauthorized` | API Key 有误 — 检查 `~/moon-bridge/config.yml` |
 | 端口 38440 占用 | `lsof -ti:38440 \| xargs kill` |
+| `codex: command not found` | `npm install -g @openai/codex` |
+
+## 许可证
+
+[MIT](LICENSE)
