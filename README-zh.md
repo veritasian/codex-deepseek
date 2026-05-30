@@ -1,4 +1,4 @@
-# Codex + DeepSeek — 一键脚本桥接
+# Codex桌面版 + DeepSeek — 一键脚本桥接 无缝链接
 
 > 想用 Codex CLI，但不想付 OpenAI 的账单？DeepSeek 更便宜更快——但两者协议完全不同。这个仓库给你一条脚本，自动搭桥、写配置、启动一切。CLI 的能力，DeepSeek 的价格，零手动。
 
@@ -6,6 +6,12 @@
 [![License](https://img.shields.io/github/license/veritasian/codex-deepseek)](LICENSE)
 
 [English](README.md)
+
+
+
+
+<img width="1968" height="1378" alt="Screenshot 2026-05-31 at 07-43-50" src="https://github.com/user-attachments/assets/3e9eba53-c89e-42fd-a9d3-cef3086aacd4" />
+
 
 ## 痛点
 
