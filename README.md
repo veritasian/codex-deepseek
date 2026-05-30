@@ -1,4 +1,4 @@
-# Codex + DeepSeek — One-Script Bridge
+# Codex desktop + DeepSeek — One-Script Bridge
 
 > You want Codex CLI but don't want to pay OpenAI. DeepSeek is cheaper and faster — but the two speak completely different protocols. This repo gives you a single script that builds the bridge, writes the config, and launches everything. CLI power, DeepSeek prices, zero manual setup.
 
@@ -6,6 +6,13 @@
 [![License](https://img.shields.io/github/license/veritasian/codex-deepseek)](LICENSE)
 
 [中文说明](README-zh.md)
+
+
+
+<img width="2102" height="1292" alt="Screenshot 2026-05-31 at 07-42-03" src="https://github.com/user-attachments/assets/12f4bcee-5465-4ca5-bcaa-49d183060cc8" />
+
+
+
 
 ## Pain Point
 
